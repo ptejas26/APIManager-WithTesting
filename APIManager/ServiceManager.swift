@@ -93,34 +93,34 @@ public class ServiceManager: NSObject {
         urlSession.resume()
     }
 
-   public func getMethod(url: String, completionHandler: @escaping CompletionBlockModel) {
-        let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 10
-        config.timeoutIntervalForResource = 10
-        let url = URL(string: url)!
-
-        var request = URLRequest(url: url)
-        request.httpMethod = RequestType.get.rawValue
-
-        let urlSession = URLSession(configuration: config).dataTask(with: request) { (data, urlResponse, error) in
-
-            if error == nil {
-                if let data = data {
-
-                    if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
-                        guard let name = json["name"] as? String, let type = json["type"] as? String else {return}
-                        completionHandler(.success((name: name, type: type)))
-                    } else {
-                        completionHandler(.failure(error!))
-                    }
-                } else {
-                    completionHandler(.failure(error!))
-                }
-
-            } else {
-                completionHandler(.failure(customError))
-            }
-        }
-        urlSession.resume()
-    }
+//   public func getMethod(url: String, completionHandler: @escaping CompletionBlockModel) {
+//        let config = URLSessionConfiguration.default
+//        config.timeoutIntervalForRequest = 10
+//        config.timeoutIntervalForResource = 10
+//        let url = URL(string: url)!
+//
+//        var request = URLRequest(url: url)
+//        request.httpMethod = RequestType.get.rawValue
+//
+//        let urlSession = URLSession(configuration: config).dataTask(with: request) { (data, urlResponse, error) in
+//
+//            if error == nil {
+//                if let data = data {
+//
+//                    if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
+//                        guard let name = json["name"] as? String, let type = json["type"] as? String else {return}
+//                        completionHandler(.success((name: name, type: type)))
+//                    } else {
+//                        completionHandler(.failure(error!))
+//                    }
+//                } else {
+//                    completionHandler(.failure(error!))
+//                }
+//
+//            } else {
+//                completionHandler(.failure(customError))
+//            }
+//        }
+//        urlSession.resume()
+//    }
 }
