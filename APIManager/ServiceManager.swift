@@ -59,7 +59,7 @@ public class ServiceManager: NSObject {
         urlSession.resume()
     }
 
-    public class func postMethod<T:Codable>(url: String, model T: T.Type, completionHandler: @escaping CompletionBlockWithResult<T>) {
+    public class func postMethod<T:Codable>(url: String, httpBodyDictionay: [String: Any]? = nil, model T: T.Type, completionHandler: @escaping CompletionBlockWithResult<T>) {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 10
         config.timeoutIntervalForResource = 10
@@ -68,7 +68,9 @@ public class ServiceManager: NSObject {
         else {return}
 
         var request = URLRequest(url: url)
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: [:], options: []) else {
+        guard
+            let dictionary = httpBodyDictionay,
+            let httpBody = try? JSONSerialization.data(withJSONObject: dictionary, options: []) else {
             return
         }
         request.httpMethod = RequestType.post.rawValue
