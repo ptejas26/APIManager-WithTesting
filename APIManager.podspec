@@ -11,5 +11,5 @@ Pod::Spec.new do |spec|
   spec.social_media_url   = "https://twitter.com/tejaspatelia"
   spec.platform     = :ios, "15.5"
   spec.source       = { :git => "https://github.com/ptejas26/APIManager.git", :tag => "1.0.0" }
-  spec.source_files  = "APIManager/**/*"
+  spec.source_files  = "APIManager/*.{h,m,swift}"
 end
