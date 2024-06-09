@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 
 /// Requset type allows all types of requests
@@ -93,5 +94,72 @@ public class ServiceManager: NSObject {
             }
         }
         urlSession.resume()
+    }
+}
+
+protocol NetworkEngine {
+    typealias Handler = (Data?, URLResponse?, Error?) -> Void
+    
+    func performRequest(url: URL, completionHandler: @escaping Handler)
+}
+
+extension URLSession: NetworkEngine {
+    typealias Handler = NetworkEngine.Handler
+    
+    func performRequest(url: URL, completionHandler: @escaping Handler) {
+        let task = dataTask(with: url, completionHandler: completionHandler)
+        task.resume()
+    }
+}
+
+
+class DataLoader {
+    enum Result {
+        case error(Error)
+        case success(Data)
+    }
+    
+    private let networkEngine: NetworkEngine
+    
+    init(networkEngine: NetworkEngine = URLSession.shared) {
+        self.networkEngine = networkEngine
+    }
+    
+    func load(from url: URL, completionHandler: @escaping (Result) -> Void) {
+        
+//        let task = URLSession.shared.dataTask(with: url) { data, urlResponse, error in
+//            if let error {
+//                completionHandler(.error(error))
+//            } else if let data {
+//                completionHandler(.success(data))
+//            }
+//        }
+//        task.resume()
+        
+        networkEngine.performRequest(url: url) { data, urlResponse, error in
+            if let error {
+                completionHandler(.error(error))
+            } else if let data {
+                completionHandler(.success(data))
+            }
+        }
+    }
+}
+
+
+class ViewController: UIViewController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let dataLoader = DataLoader()
+        dataLoader.load(from: URL(string: "https://picsum.photos/200")!) { result in
+            switch result {
+            case .error(let error):
+                print(error.localizedDescription)
+            case .success(let data):
+                print(String(data: data, encoding: .utf8))
+            }
+        }
+        
     }
 }
