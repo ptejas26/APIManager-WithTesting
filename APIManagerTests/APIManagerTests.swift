@@ -38,5 +38,32 @@ class APIManagerTests: XCTestCase {
         
     }
     
-    
+    func testLoadingData() {
+        class NetworkEngineMock: NetworkEngine {
+            typealias Handler = NetworkEngine.Handler
+            
+            var requestedURL: URL?
+            
+            func performRequest(url: URL, completionHandler: @escaping Handler) {
+                requestedURL = url
+                
+                let data = "Hello world".data(using: .utf8)
+                completionHandler(data, nil, nil)
+            }
+        }
+        
+        let engine = NetworkEngineMock()
+        let loader = DataLoader(networkEngine: engine)
+        
+        var result: DataLoader.Result?
+        let url = URL(string: "my/API")!
+        loader.load(from: url) { result = $0 }
+        
+        XCTAssertEqual(engine.requestedURL, url)
+        let successData = "Hello world".data(using: .utf8)!
+        
+        if case let .success(successData) = result {
+            XCTAssertTrue(true)
+        }
+    }
 }
